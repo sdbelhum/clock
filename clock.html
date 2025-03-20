@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">  <!-- utf-8 encoding -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>My Clock App</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            /* The following css code was generated with the assistance of ChatGPT by OpenAI. */
+            /* Source: OpenAI's ChatGPT (October 2024 version), https://chat.openai.com/ */
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            /* Sets up each part of app in different sections */
+            body {
+                font-family: 'Comic Sans MS', cursive, sans-serif; 
+                background-color: #f7f1e3;
+                color: #333;
+                line-height: 1.6;
+                padding: 20px;
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* Two columns */
+                grid-template-rows: auto auto; /* Two rows */
+                gap: 20px; /* Gap between grid items */
+                height: 100vh; /* Full viewport height */
+            }
+
+            /* Section styling */
+            section {
+                padding: 20px;
+                border-radius: 15px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+            }
+
+            /* Enlarge each section when hovered over */
+            section:hover {
+                transform: scale(1.05); 
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            }
+
+            /* Different vibrant background colors for each section */
+            #clock {
+                background-color: #ff6b6b; /* Red for clock */
+            }
+
+            #timer {
+                background-color: #48dbfb; /* Blue for timer */
+            }
+
+            #stopwatch {
+                background-color: #1dd1a1; /* Green for stopwatch */
+            }
+
+            #countdown {
+                background-color: #feca57; /* Yellow for countdown */
+            }
+
+            /* Header styling */
+            h1 {
+                grid-column: 1 / span 2; /* Center the title across two columns */
+                text-align: center;
+                margin-bottom: 30px;
+                font-size: 2.5em;
+                color: #2f3640;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            }
+
+            /* Section title styling */
+            h2 {
+                font-size: 1.8em;
+                margin-bottom: 15px;
+                color: #ffffff;
+            }
+
+            /* Styling for time display */
+            time {
+                font-size: 1.5em;
+                color: #ffffff;
+                display: block;
+                margin-bottom: 20px;
+                font-weight: bold;
+            }
+
+            /* Input and button styling */
+            input[type="number"], input[type="datetime-local"] {
+                padding: 10px;
+                font-size: 1.1em;
+                border: 2px solid #ffffff;
+                border-radius: 10px;
+                margin-bottom: 15px;
+                width: 100%;
+                background-color: #ffffff;
+                color: #333;
+            }
+
+            input[type="checkbox"] {
+                margin-left: 10px;
+                vertical-align: middle;
+            }
+
+            /* Makes buttons pink, creates nice shape */
+            button {
+                background-color: #ff9ff3;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 10px;
+                font-size: 1.2em;
+                cursor: pointer;
+                margin-right: 10px;
+                margin-top: 15px;
+                transition: background-color 0.3s ease, transform 0.3s ease; /* smooth transition for button hovering */
+            }
+
+            /* Highlights button with shadow and moves up a bit */
+            button:hover {
+                background-color: #f368e0;
+                transform: translateY(-3px);
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+            }
+
+            /* Countdown hidden message styling, initially hidden, will display when countdown is over */
+            #countdownMessage, #timerMessage {
+                font-size: 1.4em;
+                color: red;
+                text-align: center;
+                margin-top: 15px;
+                display: none;
+                font-weight: bold;
+            }
+
+            /* Styling to align the stopwatch buttons */
+            #stopwatch button {
+                display: inline-block;
+                margin-top: 10px;
+                margin-right: 10px;
+            }
+
+            /* Grid layout to position the 4 sections */
+            #clock {
+                grid-column: 1;
+                grid-row: 1;
+            }
+
+            #timer {
+                grid-column: 2;
+                grid-row: 1;
+            }
+
+            #stopwatch {
+                grid-column: 1;
+                grid-row: 2;
+            }
+
+            #countdown {
+                grid-column: 2;
+                grid-row: 2;
+            }
+
+        </style>
+    </head>
+    <body>
+
+        <h1>Clock App</h1>
+        
+        <!-- Clock part of app -->
+        <section id="clock"> 
+        <h2>Clock</h2>
+        <!-- Holds value for current time, used 24 hour clock for ease of porogramming -->
+        <time id = "clockDatetime" >00:00:00</time>
+        </section>
+
+        <!-- Timer part of app -->
+        <section id="timer">
+        <h2>Set Timer</h2>
+        <!-- Input for number of minutes -->
+        <label for="minutesInput">Minutes:</label>
+        <input type="number" id="minutesInput" name="minutes" min="0" placeholder="0" >
+        <!-- Input for number of seconds -->
+        <label for="secondsInput">Seconds:</label>
+        <input type="number" id="secondsInput" name="seconds" min="0" max="59" placeholder="0" >
+        <!-- Start/stop timer -->
+        <input type='checkbox' id="startTimer"> Start Timer
+        <p id = "timerMessage">Time's Up!</p>
+        </section>
+        
+        <!-- Stopwatch part of app -->
+        <section id="stopwatch">
+        <h2>Stopwatch</h2>
+        <!-- Holds value for current time elapsed-->
+        <time id = "stopwatchTime" datetime="2024-10-14T00:00:00">00:00:00:000</time>
+        <!-- Button to start stopwatch -->
+        <button id="startStopwatch">Start</button>
+        <!-- Button to stop stopwatch -->
+        <button id="stopStopwatch">Stop</button>
+        <!-- Button to reset stopwatch, will not stop unless stop is clicked -->
+        <button id="resetStopwatch">Reset</button>
+        </section>
+
+        <!-- Countdown part of app -->
+        <section id="countdown">
+        <h2>Countdown</h2>
+        <!-- Catches value for goal datetime -->
+        <label for="datetime">Choose a date and time:</label>
+        <input type="datetime-local" id="datetime" name="datetime">
+        <time id = "countdownDatetime" datetime="2024-10-14T00:00:00">0 years 0 months 0 days 0 hours 0 minutes 0 seconds remaining</time>
+        <!-- Secret message -->
+        <p id="countdownMessage">Countdown is over!</p>
+        </section>
+        
+        <script>
+            "use strict";
+            // Ticker class used to tick each clock app at the same time
+            // This class utilizes a singleton design pattern to ensure that there is only one
+            // instance of Ticker. It also uses a observer design pattern to notify each observer that a tick has occured.
+            class Ticker {
+                constructor() {
+                    if (Ticker.instance) {
+                        throw new Error("Ticker instance already exists!"); // Throw an error if already instantiated
+                    }
+
+                    this.observers = [];    // List of observers
+                    Ticker.instance = this; // Store the instance
+                }
+                // Returns instance of Ticker for the app, creates one if there is none
+                static getInstance() {
+                    if (!Ticker.instance) {
+                        Ticker.instance = new Ticker();
+                    }
+                    return Ticker.instance;
+                }
+                // Adds an observer to observe ticks and be notified when each tick happens by adding to list of observers
+                addObserver(observer) {
+                    this.observers.push(observer);
+                }
+                // Notifies all observers that a tick has occured 
+                notify() {
+                    this.observers.forEach(observer => observer.tick());
+                }
+                // Runs continuously, will notify each observer, then wait for one second to call run again
+                run() {
+                    this.notify();
+                    setTimeout(() => this.run(), 1000);
+                }
+            }
+            
+            // Clock class used to keep time and to control clock views
+            // Is an observer of Ticker
+            // It does this by grabbing the current time when the app starts, then each time tick()
+            // is called, the time is incremented by one second
+            class Clock {
+                constructor() {
+                    const now = new Date();     // Grabs current time to display
+                    this.hours = now.getHours();
+                    this.minutes = now.getMinutes();
+                    this.seconds = now.getSeconds();
+                    this.view = document.getElementById("clockDatetime")
+                }
+                // Ticks by one second, currently adjusts minutes, and hours if needed
+                tick() {
+                    this.seconds += 1;
+                    if (this.seconds === 60) {
+                        this.seconds = 0;
+                        this.minutes += 1;
+                        if (this.minutes === 60) {
+                            this.minutes = 0;
+                            this.hours += 1;
+                            if (this.hours === 24) {
+                                this.hours = 0;
+                            }
+                        }
+                    }
+                    this.updateView(); // Updates view to show time
+                }
+                // Correctly formats time in order to display to user
+                updateView() {
+                    this.view.innerHTML = `${this.hours.toString().padStart(2, '0')}:${this.minutes.toString().padStart(2, '0')}:${this.seconds.toString().padStart(2, '0')}`;
+                }
+            }
+            // Timer class used to create a timer and countdown from that time in minutes and seconds
+            // Is an observer of Ticker
+            // It does this by getting the user to enter a particular number of minutes and seconds
+            // and will count down from there.
+            class Timer {
+                constructor() {
+                    this.minutes = 0; // Initializes minutes and seconds to 0. To be entered by user
+                    this.seconds = 0;
+                    this.minuteView = document.getElementById("minutesInput");
+                    this.secondView = document.getElementById("secondsInput");
+                    this.checkbox = document.getElementById("startTimer");
+                    this.message = document.getElementById("timerMessage");
+                    this.running = false; // Is checkbox checked?
+
+                    // Sets listener to when checkbox is changed, will start the timer. 
+                    // If the checkbox is not checked, will stop the timer
+                    this.checkbox.addEventListener('change', () => {
+                        if (this.checkbox.checked) {
+                            this.start();
+                        } else {
+                            this.stop();
+                            }
+                        });
+                }
+
+                // Will check is timer is running first, then if it is, will decrease seconds by 1
+                // And adjust minutes if needed. If after adjust, the timer minutes and seconds both
+                // are 0, then the timer will stop.
+                tick() {
+                    if (this.running) {
+                        if (this.seconds === 0) {
+                            if (this.minutes > 0) {
+                                // Decrease minutes and reset seconds to 59
+                                this.minutes -= 1;
+                                this.seconds = 59;
+                            }
+                        } else {
+                            // Decrease seconds only when they are greater than 0
+                            this.seconds -= 1;
+                        }
+
+                        // Stop when both minutes and seconds reach 0
+                        // Shows "Time's Up! Message"
+                        if (this.minutes === 0 && this.seconds === 0) {
+                            this.stop();
+                            this.message.style.display = "block";
+                        }
+
+                        // Update the input fields with the current minutes and seconds
+                        this.updateView();
+                    }
+                }
+
+                // Grabs the starting values for minutes and seconds to countdown from and
+                // changes timer to be running. This also disables changing of the minutes
+                // and the seconds by the user. If both minutes and seconds are 0, the checkbox will 
+                // automatically uncheck until numbers > 0 are entered.
+                start() {
+                    // Hides "Time's Up!" Message
+                    this.message.style.display = "none";
+                    this.minutes = parseInt(this.minuteView.value, 10) || 0;
+                    this.seconds = parseInt(this.secondView.value, 10) || 0;
+                    if (this.minutes > 0 || this.seconds > 0) {
+                        this.running = true;
+                        this.minuteView.disabled = true;
+                        this.secondView.disabled = true;
+                    }
+                    else {
+                        this.checkbox.checked = false;
+                    }
+                } 
+
+                // Stops the timer. This happens if the timer goes down to 0 or if the box
+                // is unchecked. This also reenables the user to enter values for minutes and seconds.
+                stop() {
+                    this.running = false;
+                    this.minuteView.disabled = false;
+                    this.secondView.disabled = false;
+                    this.checkbox.checked = false;
+                }
+                // Updates the timer views to the current minutes and seconds
+                updateView() {
+                    this.minuteView.value = this.minutes;
+                    this.secondView.value = this.seconds;
+                }
+            }
+
+            // Stopwatch class used to create a stopwatch that the user can start, stop, and reset.
+            // It is an observer of Ticker
+            // When the start button is pressed, the Stopwatch will begin counting up
+            // If the pause button is clicked, the counting up will stop until start is clicked again
+            // If the reset button is clicked, the time will start back from 0.
+            class Stopwatch {
+                constructor() {
+                    this.hours = 0;   // Initializes starting times to 0 
+                    this.minutes = 0;
+                    this.seconds = 0;
+                    this.milliseconds = 0;
+                    this.running = false; // Is Stopwatch running?
+                    this.view = document.getElementById("stopwatchTime");
+                    this.startBtn = document.getElementById("startStopwatch");
+                    this.stopBtn = document.getElementById("stopStopwatch");
+                    this.resetBtn = document.getElementById("resetStopwatch");
+                    this.lastTickTime = null; // Store the time of the last tick
+
+                    this.startBtn.addEventListener("click", () => { // Enables start button to start the timer when clicked
+                        this.start();
+                    });
+
+                    this.stopBtn.addEventListener("click", () => { // Enables stop button to pause the timer when clicked
+                        this.stop();
+                    });
+
+                    this.resetBtn.addEventListener("click", () => { // Enables reset button to reset all times back to 0 when clicked
+                        this.reset();
+                    });
+                }
+
+                // Will check if Stopwatch is running first, if it is, will increment seconds by one
+                // If needed, will increment minutes and hours as well.
+                tick() {
+                    if (this.running) {
+                        const now = Date.now();  // Get the current timestamp
+                        if (this.lastTickTime) {
+                            const timeDifference = now - this.lastTickTime; // Difference since the last tick in milliseconds
+                            // Update milliseconds, seconds, minutes, and hours accordingly
+                            this.milliseconds += timeDifference;
+                            while (this.milliseconds >= 1000) { // Handle overflow into seconds
+                                this.milliseconds -= 1000;
+                                this.seconds += 1;
+                                if (this.seconds === 60) {
+                                    this.seconds = 0;
+                                    this.minutes += 1;
+                                    if (this.minutes === 60) {
+                                        this.minutes = 0;
+                                        this.hours += 1;
+                                    }
+                                }
+                            }
+                        }
+
+                        // Store the current timestamp for the next tick
+                        this.lastTickTime = now;
+
+                        this.updateView(); // Update the display with the new time
+                    }
+                }   
+
+                // Starts the timer, diables the start button
+                start() {
+                    this.running = true;
+                    this.lastTickTime = Date.now();      
+                    this.startBtn.disabled = true; // Disable start button
+                }
+
+                // Stops the timer at current time
+                stop() {
+                    this.running = false;
+                    this.startBtn.disabled = false; // Enable start button
+                }
+
+                // Resets all time variables back to 0 and updates view
+                reset() {
+                    this.hours = 0;
+                    this.minutes = 0;
+                    this.seconds = 0;
+                    this.milliseconds = 0;
+                    this.lastTickTime = null;
+                    this.updateView();
+                }
+
+                // Properly formats and updates the view to show the current time to the user
+                updateView() {
+                    this.view.innerHTML = `${this.hours.toString().padStart(2, '0')}:${this.minutes.toString().padStart(2, '0')}:${this.seconds.toString().padStart(2, '0')}:${this.milliseconds.toString().padStart(3, '0')}`;
+                }
+            }
+
+            // Countdown class used to create a countdown that the user can choose a specific date
+            // And it will tell you either, how much time remaining or how long ago the date and time was since
+            // it elapsed.
+            // It is an Observer of Ticker
+            // If a new date/time are selected, the countdown/countfrom are displayed to the user
+            class Countdown {
+            constructor() {
+                this.targetDate = null; // Date that we are counting to or from
+                this.view = document.getElementById("countdownDatetime");
+                this.message = document.getElementById("countdownMessage");
+                this.datetimeInput = document.getElementById("datetime");
+
+                this.datetimeInput.addEventListener("change", () => {
+                    this.targetDate = new Date(this.datetimeInput.value);
+                    this.message.style.display = "none";  // Hide the message when a new date is selected
+                });
+            }
+
+            // Will first grab current date and time, then calculate difference between target date and time
+            // If time difference is negative (date and time has passed), takes absolute value so we're only dealing
+            // with positive numbers. Then calculates current time remaining using the algorithm generate with the help of ChatGPT
+            // this runs each second to get up to date time remaining or time passed
+            tick() {
+                if (this.targetDate) {
+                    const now = new Date();  // Grabs current date and time
+                    let timeDifference = this.targetDate - now;  // Time difference between then and now in milliseconds
+
+                    // If the time has passed, display how much time has passed since the target date
+                    let isPast = false;
+                    if (timeDifference < 0) {
+                        timeDifference = Math.abs(timeDifference);
+                        isPast = true;
+                    }
+
+                    // The following code was generated with the assistance of ChatGPT by OpenAI.
+                    // Source: OpenAI's ChatGPT (October 2024 version), https://chat.openai.com/
+                    const years = Math.floor(timeDifference / (1000 * 60 * 60 * 24 * 365));
+                    timeDifference %= (1000 * 60 * 60 * 24 * 365);
+                    const months = Math.floor(timeDifference / (1000 * 60 * 60 * 24 * 30));
+                    timeDifference %= (1000 * 60 * 60 * 24 * 30);
+                    const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+                    timeDifference %= (1000 * 60 * 60 * 24);
+                    const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+                    timeDifference %= (1000 * 60 * 60);
+                    const minutes = Math.floor(timeDifference / (1000 * 60));
+                    timeDifference %= (1000 * 60);
+                    const seconds = Math.floor(timeDifference / 1000);
+
+                    // Formats string to show to user
+                    const timeString = `${years} years ${months} months ${days} days ${hours} hours ${minutes} minutes ${seconds} seconds`;
+
+                    // Update the view with remaining or past time
+                    this.view.innerHTML = isPast ? `${timeString} ago` : `${timeString} remaining`;
+
+                    // If the countdown is over, show the hidden element
+                    if (isPast) {
+                        this.message.style.display = "block";  // Show the hidden message
+                    }
+                }
+            }
+        }
+            const ticker = Ticker.getInstance(); // Set up singleton ticker
+            // Create clock, time, stopwatch, countdown objects
+            const clock = new Clock();
+            const timer = new Timer();
+            const stopwatch = new Stopwatch();
+            const countdown = new Countdown();
+            // Add observers to ticker instance 
+            ticker.addObserver(clock);
+            ticker.addObserver(timer);
+            ticker.addObserver(stopwatch);
+            ticker.addObserver(countdown);
+            // Continues ticking and notifying observers of tick
+            ticker.run();
+        </script>
+    </body>
+</html>
